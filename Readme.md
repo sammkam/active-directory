@@ -23,3 +23,16 @@ Confirm SafeModeAdministratorPassword: ************
 
 The target server will be configured as a domain controller and restarted when this operation is complete.
 ```
+
+
+Get-NetIpaddress
+
+
+
+# Joining the Workstation to the domain
+
+```
+get-dnsclientserveraddressc  # check the DNS 
+set-dnsclientserveraddress -interfaceindex 4 -ServerAddresses 192.168.42.155 # set to the DC
+Add-Computer -DomainName xyz.com -Credential xyz\Administrator -Force -Restart
+```
