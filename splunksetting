@@ -1,0 +1,61 @@
+
+Splunk Universal Forwarder（UF）から Ubuntu サーバーへログを送るための具体的な設定手順をまとめます。
+
+1. inputs.conf の設定方法
+Windows 側の UF でどのログを転送するかを指定します。
+
+設定ファイルの場所: C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
+
+※初回インストール直後はファイルが存在しない場合があるため、その場合は新規作成します。
+
+推奨の設定内容（AD ラボ用）:
+以下の内容をコピー＆ペーストして保存してください。
+
+Ini, TOML
+# Windows セキュリティログの転送
+[WinEventLog://Security]
+index = wineventlog
+disabled = 0
+
+# Sysmon ログの転送（インストール済みの場合）
+[WinEventLog://Microsoft-Windows-Sysmon/Operational]
+index = sysmon
+disabled = 0
+renderXml = true
+
+# PowerShell スクリプトブロックログ（CDSA試験で重要）
+[WinEventLog://Microsoft-Windows-PowerShell/Operational]
+index = powershell
+disabled = 0
+注意: index の値（wineventlog など）は、あらかじめ Ubuntu 側の Splunk で作成したインデックス名と一致させてください。
+
+2. ファイアウォールルールの作成（コマンドライン）
+Windows（UF 側）から Ubuntu（Splunk 側）の 9997 番ポート へ通信を通すためのルールを書きます。
+
+管理者権限の PowerShell で以下のコマンドを実行してください。
+
+PowerShell
+# 送信（Outbound）ルールの作成：Splunk へのログ転送を許可
+New-NetFirewallRule -DisplayName "Allow Splunk UF Outbound (9997)" `
+    -Direction Outbound `
+    -LocalPort Any `
+    -RemotePort 9997 `
+    -Protocol TCP `
+    -Action Allow
+解説: UF は自分から Splunk サーバーへ接続しに行くため、通常は「Outbound（送信）」ルールを作成します。
+
+3. 設定を反映させる手順
+inputs.conf を保存します。
+
+PowerShell で上記のファイアウォールコマンドを実行します。
+
+SplunkForwarder サービスを再起動 して設定を読み込ませます。
+
+PowerShell
+# サービスの再起動コマンド
+Restart-Service -Name SplunkForwarder
+これで、Ubuntu 側の Splunk で index=wineventlog と検索すれば、AD からのログが流れ始めるはずです。
+
+もしログが届かない場合は、Ubuntu 側で 9997 ポートが Listen 状態か を確認してください。
+
+Ubuntu 側での確認コマンド: netstat -an | grep 9997
