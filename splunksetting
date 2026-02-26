@@ -17,6 +17,14 @@ Ini, TOML
 index = wineventlog
 disabled = 0
 
+[WinEventLog://System]
+index = wineventlog
+disabled = 0
+
+[WinEventLog://Application]
+index = wineventlog
+disabled = 0
+
 # Sysmon ログの転送（インストール済みの場合）
 [WinEventLog://Microsoft-Windows-Sysmon/Operational]
 index = sysmon
