@@ -1,0 +1,23 @@
+install ubuntu server 
+https://ubuntu.com/download/server
+set as OpenSSH server 
+after reboot 
+sudo apt update && sudo apt upgrade -y
+sudo apt autoremove - 
+sudo apt clean 
+
+lsblk 
+df -h
+free -h
+
+# install splunk 
+wget -O splunk-10.2.0-d749cb17ea65-linux-amd64.deb "https://download.splunk.com/products/splunk/releases/10.2.0/linux/splunk-10.2.0-d749cb17ea65-linux-amd64.deb"
+# Open port on 9997
+# splunk on web > Setting > Forwarding and receiving > Configure Receiving > 9997
+# sudo ufw allow 9997
+
+
+
+
+universal forwerder 
+wget -O splunkforwarder-10.2.0-d749cb17ea65-windows-x64.msi "https://download.splunk.com/products/universalforwarder/releases/10.2.0/windows/splunkforwarder-10.2.0-d749cb17ea65-windows-x64.msi"
