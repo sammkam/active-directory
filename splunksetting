@@ -6,8 +6,6 @@ Windows 側の UF でどのログを転送するかを指定します。
 
 設定ファイルの場所: C:\Program Files\SplunkUniversalForwarder\etc\system\local\inputs.conf
 
-※初回インストール直後はファイルが存在しない場合があるため、その場合は新規作成します。
-
 推奨の設定内容（AD ラボ用）:
 以下の内容をコピー＆ペーストして保存してください。
 
@@ -35,7 +33,6 @@ renderXml = true
 [WinEventLog://Microsoft-Windows-PowerShell/Operational]
 index = powershell
 disabled = 0
-注意: index の値（wineventlog など）は、あらかじめ Ubuntu 側の Splunk で作成したインデックス名と一致させてください。
 
 2. ファイアウォールルールの作成（コマンドライン）
 Windows（UF 側）から Ubuntu（Splunk 側）の 9997 番ポート へ通信を通すためのルールを書きます。
@@ -67,3 +64,6 @@ Restart-Service -Name SplunkForwarder
 もしログが届かない場合は、Ubuntu 側で 9997 ポートが Listen 状態か を確認してください。
 
 Ubuntu 側での確認コマンド: netstat -an | grep 9997
+
+
+
