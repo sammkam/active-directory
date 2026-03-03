@@ -15,3 +15,28 @@ if (-not (Test-Path $basePath)) {
 Set-ItemProperty $basePath -Name EnableScriptBlockLogging -Value "1"
 }
 ```
+PowerShell ScriptBlock Logging をドメイン全体で有効化（CUI）
+1. GPO作成
+Import-Module GroupPolicy
+New-GPO -Name "Enable_PowerShell_Logging"
+2. ScriptBlock Logging 有効化
+Set-GPRegistryValue `
+  -Name "Enable_PowerShell_Logging" `
+  -Key "HKLM\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" `
+  -ValueName "EnableScriptBlockLogging" `
+  -Type DWord `
+  -Value 1
+3. ドメインにリンク
+New-GPLink `
+  -Name "Enable_PowerShell_Logging" `
+  -Target "DC=lab,DC=local"
+
+※ DNは環境に合わせる
+確認：
+
+Get-ADDomain | Select DistinguishedName
+4. 反映
+gpupdate /force
+確認（Event ID 4104）
+Get-WinEvent -LogName "Microsoft-Windows-PowerShell/Operational" |
+Where-Object {$_.Id -eq 4104}
